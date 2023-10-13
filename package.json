@@ -1,0 +1,49 @@
+{
+  "name": "cloth-store-admin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "start:dev": "npx nodemon",
+    "build": "rimraf ./build && tsc",
+    "start:build": "npm run build && node -r dotenv/config ./build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@adminjs/express": "^6.0.1",
+    "@adminjs/mongoose": "^4.0.0",
+    "@types/node": "^20.8.5",
+    "adminjs": "^7.2.2",
+    "cloudinary": "^1.41.0",
+    "connect-pg-simple": "^9.0.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-formidable": "^1.2.0",
+    "express-session": "^1.17.3",
+    "http-errors": "~1.6.3",
+    "mongoose": "^7.6.1",
+    "morgan": "~1.9.1",
+    "multer": "1.4.5-lts.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "pug": "^3.0.2",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.6.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.19",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "eslint": "^8.51.0",
+    "eslint-config-standard-with-typescript": "^39.1.1",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-n": "^16.2.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "nodemon": "^3.0.1",
+    "typescript": "^5.2.2"
+  },
+  "author": "devjaes",
+  "license": "ISC"
+}

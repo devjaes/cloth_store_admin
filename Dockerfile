@@ -4,21 +4,17 @@ FROM node:18.18.1
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container (si tienes package-lock.json)
-COPY package.json ./
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
 
-# Install nodemon globally
-RUN npm install -g nodemon
-
-# Install application dependencies in the container using npm
-RUN npm install
+# Install nodemon globally and app dependencies
+RUN npm install -g nodemon && npm install --no-optional
 
 # Copy the rest of the application source inside the container
 COPY . .
 
 # Specify the command to run when the container starts using nodemon
-CMD [ "npm", "run", "start:dev" ]  
-# Asumo que tu punto de entrada es "index.js". Ajusta si es diferente.
+CMD [ "nodemon", "run", "start:dev" ]
 
 # Expose port 3002 for the application
 EXPOSE 3002

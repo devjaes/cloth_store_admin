@@ -1,6 +1,6 @@
 {
     "watch": ["src"],
-    "ext": ".ts,.js",
+    "ext": ".ts,.js, .mjs",
     "ignore": ["node_modules/*"],
-    "exec": "node --trace-warnings --inspect --es-module-specifier-resolution=node -r dotenv/config ./src/app.js dotenv_config_path=.env.local dotenv_config_debug=true"
+    "exec": "node --trace-warnings --inspect --es-module-specifier-resolution=node -r dotenv/config ./src/app.mjs dotenv_config_path=.env.local dotenv_config_debug=true"
   }

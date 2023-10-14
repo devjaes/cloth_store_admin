@@ -27,9 +27,6 @@
         "outDir": "./dist",
         "rootDir": "./src",
         "baseUrl": "./",
-        "types": [
-            "node"
-        ],
         "typeRoots": [
             "node_modules/@types"
         ]

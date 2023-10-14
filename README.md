@@ -28,7 +28,7 @@ docker build -t cloth-store-admin:latest .
 (Esto iniciará el servidor en el puerto 3002, o cualquier otro que hayas especificado en el Dockerfile).
 ```bash
 
-docker run -p 3002:3002 -v $(pwd):/app -it --name clothadmin cloth-store-admin:latest
+docker run -p 3002:3002 -v "$(pwd):/app" -it --name clothadmin cloth-store-admin:latest
 ```
 
 ### 5. Accede al servidor:
@@ -36,7 +36,7 @@ Abre tu navegador o utiliza cualquier cliente HTTP y navega a `http://localhost:
 
 ### 6. Iniciar contenedor después de la primera vez:
 ```bash
-docker start clothadmin
+docker start -i clothadmin
 ```
 
 ## Hot Reload

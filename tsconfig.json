@@ -1,34 +1,28 @@
 {
-    "exclude": [
-        "./build",
-        "jest.config.ts",
-        "./test"
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
     ],
-    "include": [
-        "./src"
-    ],
-    "ts-node": {
-        "files": true
-    },
-    "compilerOptions": {
-        "target": "ESNext",
-        "lib": [
-            "es6"
-        ],
-        "resolveJsonModule": true,
-        "allowJs": true,
-        "noImplicitAny": true,
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "esModuleInterop": true,
-        "strict": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "baseUrl": "./",
-        "typeRoots": [
-            "node_modules/@types"
-        ]
+    "paths": {
+      "@/*": ["./*"]
     }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

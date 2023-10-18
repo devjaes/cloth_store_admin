@@ -1,61 +1,92 @@
-# Cloth Store Admin Backend
+# Full Stack E-Commerce + Dashboard & CMS: Next.js 13 App Router, React, Tailwind, Prisma, MySQL, 2023
 
-Este proyecto contiene el backend del administrador para el ecommerce de ropa. Para ejecutar este proyecto en un entorno local utilizando Docker, sigue los siguientes pasos.
+![Copy of Copy of Fullstack Twitter Clone (1)](https://github.com/AntonioErdeljac/next13-ecommerce-admin/assets/23248726/088760cb-837d-44b7-a959-63089385d0a0)
 
-## Prerrequisitos
 
-1. Asegúrate de tener **Docker** instalado en tu máquina. Si aún no lo tienes, puedes descargarlo e instalarlo desde [Docker Hub](https://hub.docker.com/).
+For DEMO, use [Stripe Testing Cards](https://stripe.com/docs/testing)
 
-## Instrucciones
+This is a repository for a Full Stack E-Commerce + Dashboard & CMS: Next.js 13 App Router, React, Tailwind, Prisma, MySQL
 
-### 1. Clona el repositorio:
-```bash
-git clone git@github.com:devjaes/clothstore_admin.git
+[VIDEO TUTORIAL](https://youtu.be/5miHyP6lExg)
+
+Key Features:
+
+- We will be using Shadcn UI for the Admin!
+- Our admin dashboard is going to serve as both CMS, Admin and API!
+- You will be able to control mulitple vendors / stores through this single CMS! (For example you can have a "Shoe store" and a "Laptop store" and a "Suit store", and our CMS will generate API routes for all of those individually!)
+- You will be able to create, update and delete categories!
+- You will be able to create, update and delete products!
+- You will be able to upload multiple images for products, and change them whenever you want!
+- You will be able to create, update and delete filters such as "Color" and "Size", and then match them in the "Product" creation form.
+- You will be able to create, update and delete "Billboards" which are these big texts on top of the page. You will be able to attach them to a single category, or use them standalone (Our Admin generates API for all of those cases!)
+- You will be able to Search through all categories, products, sizes, colors, billboards with included pagination!
+- You will be able to control which products are "featured" so they show on the homepage!
+- You will be able to see your orders, sales, etc.
+- You will be able to see graphs of your revenue etc.
+- You will learn Clerk Authentication!
+- Order creation
+- Stripe checkout
+- Stripe webhooks
+- MySQL + Prisma + PlanetScale
+
+### Prerequisites
+
+**Node version 14.x**
+
+### Cloning the repository
+
+```shell
+git clone https://github.com/AntonioErdeljac/next13-ecommerce-admin.git
 ```
 
-### 2. Navega al directorio del proyecto:
-```bash
-cd cloth_store_admin
+### Install packages
+
+```shell
+npm i
 ```
 
-### 3. Construye la imagen Docker:
-(Antes de ejecutar este comando, asegúrate de estar en el directorio donde se encuentra el `Dockerfile`).
-```bash
-docker build -t cloth-store-admin:latest .
+### Setup .env file
+
+
+```js
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
+
+# This was inserted by `prisma init`:
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL=''
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
+STRIPE_API_KEY=
+FRONTEND_STORE_URL=http://localhost:3001
+STRIPE_WEBHOOK_SECRET=
 ```
 
-### 4. Ejecuta el contenedor(Primera vez):
-(Esto iniciará el servidor en el puerto 3002, o cualquier otro que hayas especificado en el Dockerfile).
-```bash
-
-docker run -p 3002:3002 -v "$(pwd):/app" -it --name clothadmin cloth-store-admin:latest
+### Connect to PlanetScale and Push Prisma
+```shell
+npx prisma generate
+npx prisma db push
 ```
 
-### 5. Accede al servidor:
-Abre tu navegador o utiliza cualquier cliente HTTP y navega a `http://localhost:3002`.
 
-### 6. Iniciar contenedor después de la primera vez:
-```bash
-docker start -i clothadmin
+### Start the app
+
+```shell
+npm run dev
 ```
 
-## Hot Reload
+## Available commands
 
-Gracias al montaje de volúmenes que hemos establecido (`-v $(pwd):/app`), cualquier cambio que realices en los archivos del proyecto se reflejará automáticamente en el contenedor.
+Running commands with npm `npm run [command]`
 
-## Detener el contenedor
-
-Para detener el contenedor Docker, puedes usar los siguientes comandos:
-
-1. **Lista los contenedores activos:**
-```bash
-docker ps
-```
-
-2. **Detén el contenedor:**
-(Utiliza el ID del contenedor que aparece en la salida del comando anterior).
-```bash
-docker stop clothadmin
-```
-# clothstore_admin
-# cloth_store_admin
+| command         | description                              |
+| :-------------- | :--------------------------------------- |
+| `dev`           | Starts a development instance of the app |

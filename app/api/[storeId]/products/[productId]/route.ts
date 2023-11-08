@@ -19,7 +19,7 @@ export async function GET(
       include: {
         images: true,
         category: true,
-        size: true,
+        sizes: true,
         color: true,
       }
     });
@@ -134,7 +134,9 @@ export async function PATCH(
         price,
         categoryId,
         colorId,
-        sizeId,
+        sizes: {
+          deleteMany: {}
+        },
         images: {
           deleteMany: {},
         },

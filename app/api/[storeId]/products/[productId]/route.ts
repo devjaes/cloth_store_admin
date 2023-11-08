@@ -157,6 +157,17 @@ export async function PATCH(
             ],
           },
         },
+        sizes: {
+          updateMany: {
+            where: {
+              sizeId,
+            },
+            data: 
+              {
+                quantity: 0,
+              },
+          },
+        },
       },
     })
   

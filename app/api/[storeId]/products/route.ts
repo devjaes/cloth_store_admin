@@ -65,7 +65,12 @@ export async function POST(
         isArchived,
         categoryId,
         colorId,
-        sizeId,
+        sizes: {
+          create: {
+            sizeId,
+            quantity: 0,
+          },
+        },
         storeId: params.storeId,
         images: {
           createMany: {
@@ -104,7 +109,11 @@ export async function GET(
         storeId: params.storeId,
         categoryId,
         colorId,
-        sizeId,
+        sizes: {
+          some: {
+            sizeId,
+          },
+        },
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
       },
@@ -112,7 +121,11 @@ export async function GET(
         images: true,
         category: true,
         color: true,
-        size: true,
+        sizes: {
+          include: {
+            size: true,
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc',

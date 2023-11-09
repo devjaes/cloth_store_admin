@@ -38,6 +38,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -47,7 +48,9 @@ const formSchema = z.object({
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
   colorId: z.string().min(1),
-  sizeId: z.string().min(1),
+  sizes: z
+    .object({ id: z.string(), quantity: z.coerce.number().min(0) })
+    .array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
 });
@@ -261,31 +264,48 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
             <FormField
               control={form.control}
-              name="sizeId"
+              name="sizes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Size</FormLabel>
+                  <FormLabel>Tallas</FormLabel>
 
                   <FormControl>
                     <DropdownMenu open={dropdownOpen}>
                       <DropdownMenuTrigger asChild>
-                        <button
-                          onClick={() => {
-                            setDropdownOpen(!dropdownOpen);
-                          }}
+                        <Button
+                          onClick={(e) => setDropdownOpen(!dropdownOpen)}
+                          className="flex items-center justify-between"
                         >
                           hola
-                        </button>
+                        </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuCheckboxItem>
-                          <Checkbox
-                            // @ts-ignore
-                            onCheckedChange={field.onChange}
-                          />
-                          <span>Small</span>
-                          <input type="text" disabled={true} />
-                        </DropdownMenuCheckboxItem>
+                        {sizes.map((size) => (
+                          <DropdownMenuItem
+                            key={size.id}
+                            className="flex items-center justify-between"
+                          >
+                            <p className="container">{size.name}</p>
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              disabled={loading}
+                              className="ml-3 px-3 w-20"
+                              onChange={(e) => {
+                                const newSizes = field.value.map((current) => {
+                                  if (current.id === size.id) {
+                                    return {
+                                      id: size.id,
+                                      quantity: parseInt(e.target.value),
+                                    };
+                                  }
+                                  return current;
+                                });
+                                field.onChange(newSizes);
+                              }}
+                            />
+                          </DropdownMenuItem>
+                        ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </FormControl>

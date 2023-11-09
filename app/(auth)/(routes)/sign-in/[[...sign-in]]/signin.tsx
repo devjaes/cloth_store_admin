@@ -1,13 +1,20 @@
 "use client";
-import { useSignIn } from "@clerk/nextjs";
+import { auth, useSignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import { useState } from "react";
+import { redirect } from 'next/navigation';
 
 export default function SignIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const { isLoaded, signIn, setActive } = useSignIn();
+
+    const { userId } = auth();
+
+    if (userId) {
+        redirect('/dashboard');
+    }
 
     if (!isLoaded) {
         return null;
@@ -25,10 +32,9 @@ export default function SignIn() {
                     if (result.status === "complete") {
                         console.log(result);
                         setActive({ session: result.createdSessionId });
-                        console.log(email, password)
+                        redirect("/dashboard");
                     } else {
                         console.log(result);
-                        console.log(email, password)
 
                     }
                 })

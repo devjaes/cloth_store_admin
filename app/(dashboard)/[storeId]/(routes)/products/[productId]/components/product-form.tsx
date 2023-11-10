@@ -41,6 +41,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -270,26 +277,29 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <FormLabel>Tallas</FormLabel>
 
                   <FormControl>
-                    <DropdownMenu open={dropdownOpen}>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          onClick={(e) => setDropdownOpen(!dropdownOpen)}
-                          className="flex items-center justify-between"
-                        >
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="flex items-center justify-between">
                           hola
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogTitle>Seleccione las tallas</DialogTitle>
+                        <DialogDescription>
+                          Ingrese el stock por tallas
+                        </DialogDescription>
                         {sizes.map((size) => (
-                          <DropdownMenuItem
-                            key={size.id}
-                            className="flex items-center justify-between"
-                          >
+                          <>
                             <p className="container">{size.name}</p>
                             <Input
                               type="number"
                               placeholder="0"
                               disabled={loading}
+                              defaultValue={
+                                field.value.find(
+                                  (current) => current.id === size.id
+                                )?.quantity
+                              }
                               className="ml-3 px-3 w-20"
                               onChange={(e) => {
                                 const newSizes = field.value.map((current) => {
@@ -304,10 +314,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 field.onChange(newSizes);
                               }}
                             />
-                          </DropdownMenuItem>
+                          </>
                         ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      </DialogContent>
+                    </Dialog>
                   </FormControl>
 
                   <FormMessage />

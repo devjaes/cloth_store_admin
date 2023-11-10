@@ -47,7 +47,9 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
+import { Label } from "@/components/ui/label";
+import { IntegerInput } from "@/components/ui/integer-input";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -276,23 +278,39 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <FormItem>
                   <FormLabel>Tallas</FormLabel>
 
-                  <FormControl>
+                  <FormControl
+                    onChange={() => {
+                      console.log(field.value);
+                    }}
+                  >
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button className="flex items-center justify-between">
-                          hola
+                          Seleccionar Tallas
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
-                        <DialogTitle>Seleccione las tallas</DialogTitle>
+                      <DialogContent
+                        style={{ width: "fit-content", maxWidth: "100%" }}
+                      >
+                        <DialogTitle className="mt-6">
+                          Seleccione las tallas
+                        </DialogTitle>
                         <DialogDescription>
                           Ingrese el stock por tallas
                         </DialogDescription>
                         {sizes.map((size) => (
-                          <>
-                            <p className="container">{size.name}</p>
-                            <Input
-                              type="number"
+                          <div
+                            key={size.id}
+                            className="flex flex-row items-center justify-between"
+                          >
+                            <Label key={size.id} className="">
+                              {size.name}
+                            </Label>
+
+                            <IntegerInput
+                              min="0"
+                              maxIntegerValue={9999}
+                              step="1"
                               placeholder="0"
                               disabled={loading}
                               defaultValue={
@@ -304,18 +322,23 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               onChange={(e) => {
                                 const newSizes = field.value.map((current) => {
                                   if (current.id === size.id) {
+                                    console.log(current);
                                     return {
                                       id: size.id,
                                       quantity: parseInt(e.target.value),
                                     };
                                   }
+                                  console.log(current);
                                   return current;
                                 });
                                 field.onChange(newSizes);
                               }}
                             />
-                          </>
+                          </div>
                         ))}
+                        <DialogClose>
+                          <Button>Guardar</Button>
+                        </DialogClose>
                       </DialogContent>
                     </Dialog>
                   </FormControl>

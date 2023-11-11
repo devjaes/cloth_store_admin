@@ -5,6 +5,7 @@ import { formatter } from "@/lib/utils";
 
 import { ProductsClient } from "./components/client";
 import { ProductColumn } from "./components/columns";
+import { Product_Sizes } from "@prisma/client";
 
 const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
   const products = await prismadb.product.findMany({
@@ -13,7 +14,11 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
     },
     include: {
       category: true,
-      sizes: true,
+      sizes: {
+        include: {
+          size: true,
+        },
+      },
       color: true,
     },
     orderBy: {
@@ -21,17 +26,22 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
 
-  const formattedProducts: ProductColumn[] = products.map((item) => ({
-    id: item.id,
-    name: item.name,
-    isFeatured: item.isFeatured,
-    isArchived: item.isArchived,
-    price: formatter.format(item.price.toNumber()),
-    category: item.category.name,
-    sizes: item.sizes.map((size) => size.sizeId),
-    color: item.color.value,
-    createdAt: format(item.createdAt, "MMMM do, yyyy"),
-  }));
+  const formattedProducts: ProductColumn[] = await Promise.all(
+    products.map((item) => {
+      console.log(item.sizes);
+      return {
+        id: item.id,
+        name: item.name,
+        isFeatured: item.isFeatured,
+        isArchived: item.isArchived,
+        price: formatter.format(item.price.toNumber()),
+        category: item.category.name,
+        sizes: item.sizes.map((size) => size.size.name),
+        color: item.color.value,
+        createdAt: format(item.createdAt, "MMMM do, yyyy"),
+      };
+    })
+  );
 
   return (
     <div className="flex-col">

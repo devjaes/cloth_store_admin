@@ -57,6 +57,12 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
+    const product_sizes = await prismadb.product_Sizes.deleteMany({
+      where: {
+        productId: params.productId
+      }
+    });
+    
     const product = await prismadb.product.delete({
       where: {
         id: params.productId
@@ -80,7 +86,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { name, price, categoryId, images, colorId, sizeId, isFeatured, isArchived } = body;
+    const { name, price, categoryId, images, colorId, sizes, isFeatured, isArchived } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -110,8 +116,8 @@ export async function PATCH(
       return new NextResponse("Color id is required", { status: 400 });
     }
 
-    if (!sizeId) {
-      return new NextResponse("Size id is required", { status: 400 });
+    if (!sizes) {
+      return new NextResponse("Sizes is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -158,14 +164,13 @@ export async function PATCH(
           },
         },
         sizes: {
-          updateMany: {
-            where: {
-              sizeId,
-            },
-            data: 
-              {
-                quantity: 0,
-              },
+          createMany: {
+            data: [
+              ...sizes.map((size: { sizeId: string, quantity: number }) => ({
+                sizeId: size.sizeId,
+                quantity: size.quantity,
+              })),
+            ],
           },
         },
       },

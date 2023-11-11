@@ -6,8 +6,20 @@ export interface IntegerInputProps
 }
 
 const IntegerInput = React.forwardRef<HTMLInputElement, IntegerInputProps>(
-  ({ maxIntegerValue, className, ...props }, ref) => {
-    const [value, setValue] = useState("");
+  ({ maxIntegerValue, className, onChange, ...props }, ref) => {
+    const [value, setValue] = useState(props.value || "");
+
+    const triggerChange = (newValue: string) => {
+      setValue(newValue); // actualiza el estado interno
+      // crea un evento de cambio sintético para enviar al método onChange prop
+      const event = {
+        target: {
+          value: newValue,
+          name: props.name,
+        },
+      };
+      onChange?.(event as React.ChangeEvent<HTMLInputElement>);
+    };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = event.target.value;
@@ -15,15 +27,17 @@ const IntegerInput = React.forwardRef<HTMLInputElement, IntegerInputProps>(
         /^\d*$/.test(newValue) &&
         (!maxIntegerValue || parseInt(newValue, 10) <= maxIntegerValue)
       ) {
-        setValue(newValue);
+        triggerChange(newValue); // actualiza usando la función de utilidad
       }
     };
 
     const handleIncrease = () => {
       setValue((currentValue) => {
-        const numericValue = parseInt(currentValue || "0", 10);
+        const numericValue = parseInt((currentValue as string) || "0", 10);
         if (!maxIntegerValue || numericValue < maxIntegerValue) {
-          return String(numericValue + 1);
+          const newValue = String(numericValue + 1);
+          triggerChange(newValue); // actualiza usando la función de utilidad
+          return newValue;
         }
         return currentValue;
       });
@@ -31,11 +45,13 @@ const IntegerInput = React.forwardRef<HTMLInputElement, IntegerInputProps>(
 
     const handleDecrease = () => {
       setValue((currentValue) => {
-        const numericValue = parseInt(currentValue || "0", 10);
-        if (numericValue > 0) {
-          return String(numericValue - 1);
-        }
-        return currentValue;
+        const numericValue = Math.max(
+          parseInt((currentValue as string) || "0", 10) - 1,
+          0
+        );
+        const newValue = String(numericValue);
+        triggerChange(newValue); // actualiza usando la función de utilidad
+        return newValue;
       });
     };
 
@@ -60,14 +76,14 @@ const IntegerInput = React.forwardRef<HTMLInputElement, IntegerInputProps>(
           <button
             type="button"
             onClick={handleIncrease}
-            className="text-white hover:text-gray-700 focus:outline-2 bg-gray-500 font-bold h-5 rounded-sm rounded-l-none"
+            className="text-white hover:text-gray-700 focus:outline-none bg-gray-500 font-bold h-5 rounded-sm rounded-l-none"
           >
             +
           </button>
           <button
             type="button"
             onClick={handleDecrease}
-            className="text-white  hover:text-gray-700 focus:outline-2 bg-gray-500 h-5 font-bold rounded-sm rounded-l-none"
+            className="text-white hover:text-gray-700 focus:outline-none bg-gray-500 h-5 font-bold rounded-sm rounded-l-none"
           >
             -
           </button>

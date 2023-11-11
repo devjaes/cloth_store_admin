@@ -12,7 +12,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { name, price, categoryId, colorId, sizeId, images, isFeatured, isArchived } = body;
+    const { name, price, categoryId, colorId, sizes, images, isFeatured, isArchived } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -38,8 +38,8 @@ export async function POST(
       return new NextResponse("Color id is required", { status: 400 });
     }
 
-    if (!sizeId) {
-      return new NextResponse("Size id is required", { status: 400 });
+    if (!sizes) {
+      return new NextResponse("Sizes is required", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -66,9 +66,10 @@ export async function POST(
         categoryId,
         colorId,
         sizes: {
-          create: {
-            sizeId,
-            quantity: 0,
+          createMany: {
+            data: [
+              ...sizes.map((size: { sizeId: string, quantity: number }) => size),
+            ],
           },
         },
         storeId: params.storeId,
@@ -99,6 +100,7 @@ export async function GET(
     const colorId = searchParams.get('colorId') || undefined;
     const sizeId = searchParams.get('sizeId') || undefined;
     const isFeatured = searchParams.get('isFeatured');
+    const onlyAvailable = searchParams.get('onlyAvailable') || undefined;
 
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
@@ -109,11 +111,21 @@ export async function GET(
         storeId: params.storeId,
         categoryId,
         colorId,
-        sizes: {
-          some: {
-            sizeId,
+        sizes: 
+          onlyAvailable ? {
+            some: {
+              AND: {
+              quantity: {
+                gt: 0,
+              },
+              sizeId,
+            }
+            },
+          } : {
+            some: {
+              sizeId,
+            },
           },
-        },
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
       },

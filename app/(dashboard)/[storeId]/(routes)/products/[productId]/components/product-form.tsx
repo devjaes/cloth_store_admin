@@ -7,7 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
-import { Category, Color, Image, Product, Size } from "@prisma/client";
+import {
+  Category,
+  Color,
+  Image,
+  Product,
+  Product_Sizes,
+  Size,
+} from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
@@ -35,13 +42,6 @@ import {
 import ImageUpload from "@/components/ui/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -58,7 +58,7 @@ const formSchema = z.object({
   categoryId: z.string().min(1),
   colorId: z.string().min(1),
   sizes: z
-    .object({ id: z.string(), quantity: z.coerce.number().min(0) })
+    .object({ sizeId: z.string(), quantity: z.coerce.number().min(0) })
     .array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
@@ -70,6 +70,7 @@ interface ProductFormProps {
   initialData:
     | (Product & {
         images: Image[];
+        sizes: Product_Sizes[];
       })
     | null;
   categories: Category[];
@@ -88,7 +89,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const [saveDialogButtonPressed, setSaveDialogButtonPressed] = useState(false);
 
   const title = initialData ? "Edit product" : "Create product";
   const description = initialData ? "Edit a product." : "Add a new product";
@@ -106,10 +108,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         price: 0,
         categoryId: "",
         colorId: "",
-        sizes: [],
+        sizes: sizes.map((size) => ({ sizeId: size.id, quantity: 0 })),
         isFeatured: false,
         isArchived: false,
       };
+
+  const [selectSizes, setSelectSizes] = useState<
+    { sizeId: string; quantity: number }[]
+  >(defaultValues.sizes);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
@@ -278,12 +284,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <FormItem>
                   <FormLabel>Tallas</FormLabel>
 
-                  <FormControl
-                    onChange={() => {
-                      console.log(field.value);
-                    }}
-                  >
-                    <Dialog>
+                  <FormControl>
+                    <Dialog
+                      onOpenChange={() => {
+                        if (!saveDialogButtonPressed) {
+                          setSelectSizes(field.value);
+                        }
+                      }}
+                    >
                       <DialogTrigger asChild>
                         <Button className="flex items-center justify-between">
                           Seleccionar Tallas
@@ -313,31 +321,51 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               step="1"
                               placeholder="0"
                               disabled={loading}
-                              defaultValue={
+                              value={
                                 field.value.find(
-                                  (current) => current.id === size.id
+                                  (current) => current.sizeId === size.id
                                 )?.quantity
                               }
                               className="ml-3 px-3 w-20"
                               onChange={(e) => {
-                                const newSizes = field.value.map((current) => {
-                                  if (current.id === size.id) {
-                                    console.log(current);
+                                const newSizes = selectSizes.map((current) => {
+                                  if (current.sizeId === size.id) {
                                     return {
-                                      id: size.id,
+                                      sizeId: size.id,
                                       quantity: parseInt(e.target.value),
                                     };
                                   }
-                                  console.log(current);
                                   return current;
                                 });
-                                field.onChange(newSizes);
+
+                                console.log(newSizes, "nuevas tallas");
+                                setSelectSizes(newSizes);
+                                console.log(
+                                  selectSizes,
+                                  "este es el select sizes"
+                                );
                               }}
                             />
                           </div>
                         ))}
                         <DialogClose>
-                          <Button>Guardar</Button>
+                          <Button
+                            onClick={() => {
+                              field.onChange(
+                                selectSizes as {
+                                  sizeId: string;
+                                  quantity: number;
+                                }[]
+                              );
+
+                              setSelectSizes(field.value);
+                              console.log("tallas", selectSizes);
+
+                              console.log("field", field.value);
+                            }}
+                          >
+                            Guardar
+                          </Button>
                         </DialogClose>
                       </DialogContent>
                     </Dialog>

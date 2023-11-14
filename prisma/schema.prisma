@@ -15,7 +15,6 @@ model Store {
   categories Category[] @relation("StoreToCategory")
   products   Product[]  @relation("StoreToProduct")
   sizes      Size[]     @relation("StoreToSize")
-  colors     Color[]    @relation("StoreToColor")
   orders     Order[]    @relation("StoreToOrder")
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
@@ -43,8 +42,6 @@ model Product {
   price      Decimal
   isFeatured Boolean         @default(false)
   isArchived Boolean         @default(false)
-  colorId    String // Foreign Key to Color
-  color      Color           @relation(fields: [colorId], references: [id])
   images     Image[] // Relation to Image model
   orderItems OrderItem[] // Relation to Order model
   sizes      Product_Sizes[] // Relation to Product_Sizes model
@@ -53,7 +50,6 @@ model Product {
 
   @@index([storeId])
   @@index([categoryId])
-  @@index([colorId])
 }
 
 model Product_Sizes {
@@ -105,19 +101,6 @@ model Size {
   products  Product_Sizes[] // Relation to Product_Sizes model
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
-
-  @@index([storeId])
-}
-
-model Color {
-  id        String    @id @default(uuid())
-  storeId   String // Foreign Key to Store
-  store     Store     @relation("StoreToColor", fields: [storeId], references: [id])
-  name      String
-  value     String
-  products  Product[] // Relation to Product model
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 
   @@index([storeId])
 }

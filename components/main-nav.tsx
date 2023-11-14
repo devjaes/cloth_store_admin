@@ -4,63 +4,73 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
+import { Store } from "lucide-react";
+import { Store as st } from "@prisma/client";
 
 export function MainNav({
   className,
+  store,
   ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: {
+  className?: string;
+  store?: st;
+}) {
   const pathname = usePathname();
   const params = useParams();
 
   const routes = [
     {
       href: `/${params.storeId}`,
-      label: "Overview",
+      label: "Estadísticas",
       active: pathname === `/${params.storeId}`,
     },
     {
       href: `/${params.storeId}/categories`,
-      label: "Categories",
+      label: "Categorías",
       active: pathname === `/${params.storeId}/categories`,
     },
     {
       href: `/${params.storeId}/sizes`,
-      label: "Sizes",
+      label: "Tallas",
       active: pathname === `/${params.storeId}/sizes`,
     },
     {
-      href: `/${params.storeId}/colors`,
-      label: "Colors",
-      active: pathname === `/${params.storeId}/colors`,
-    },
-    {
       href: `/${params.storeId}/products`,
-      label: "Products",
+      label: "Productos",
       active: pathname === `/${params.storeId}/products`,
     },
     {
       href: `/${params.storeId}/orders`,
-      label: "Orders",
+      label: "Ordenes",
       active: pathname === `/${params.storeId}/orders`,
     },
-    {
-      href: `/${params.storeId}/settings`,
-      label: "Settings",
-      active: pathname === `/${params.storeId}/settings`,
-    },
   ];
+
+  const route = `/${params.storeId}/settings`;
 
   return (
     <nav
       className={cn("flex items-center space-x-4 lg:space-x-6", className)}
       {...props}
     >
+      <Link
+        href={route}
+        className={cn(
+          "flex flex-row outline-slate-500 outline outline-1 rounded-sm p-2 justify-center items-center transition-colors hover:outline-2 font-semibold",
+          pathname === route
+            ? "text-black dark:text-white dark:bg-slate-600 bg-gray-200 "
+            : ""
+        )}
+      >
+        <Store className="mr-2 h-4 w-4" />
+        {store?.name}
+      </Link>
       {routes.map((route) => (
         <Link
           key={route.href}
           href={route.href}
           className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
+            "text-sm font-medium transition-colors hover:text-primary ",
             route.active
               ? "text-black dark:text-white"
               : "text-muted-foreground"

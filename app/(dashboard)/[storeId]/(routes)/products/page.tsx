@@ -13,25 +13,33 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
     },
     include: {
       category: true,
-      sizes: true,
-      color: true,
+      sizes: {
+        include: {
+          size: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
     },
   });
 
-  const formattedProducts: ProductColumn[] = products.map((item) => ({
-    id: item.id,
-    name: item.name,
-    isFeatured: item.isFeatured,
-    isArchived: item.isArchived,
-    price: formatter.format(item.price.toNumber()),
-    category: item.category.name,
-    sizes: item.sizes.map((size) => size.sizeId),
-    color: item.color.value,
-    createdAt: format(item.createdAt, "MMMM do, yyyy"),
-  }));
+  const formattedProducts: ProductColumn[] = await Promise.all(
+    products.map((item) => {
+      return {
+        id: item.id,
+        name: item.name,
+        isFeatured: item.isFeatured,
+        isArchived: item.isArchived,
+        price: formatter.format(item.price.toNumber()),
+        category: item.category.name,
+        sizes: item.sizes
+          .filter((size) => size.quantity > 0)
+          .map((size) => size.size.value),
+        createdAt: format(item.createdAt, "MMMM do, yyyy"),
+      };
+    })
+  );
 
   return (
     <div className="flex-col">

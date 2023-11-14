@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
-import { Category, Color, Image, Product, Size } from "@prisma/client";
+import { Category, Image, Product, Product_Sizes, Size } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,6 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -35,19 +34,23 @@ import {
 import ImageUpload from "@/components/ui/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
+import { Label } from "@/components/ui/label";
+import { IntegerInput } from "@/components/ui/integer-input";
 
 const formSchema = z.object({
   name: z.string().min(1),
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
-  colorId: z.string().min(1),
-  sizeId: z.string().min(1),
+  sizes: z
+    .object({ sizeId: z.string(), quantity: z.coerce.number().min(0) })
+    .array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
 });
@@ -58,10 +61,10 @@ interface ProductFormProps {
   initialData:
     | (Product & {
         images: Image[];
+        sizes: Product_Sizes[];
       })
     | null;
   categories: Category[];
-  colors: Color[];
   sizes: Size[];
 }
 
@@ -69,14 +72,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   categories,
   sizes,
-  colors,
 }) => {
   const params = useParams();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const title = initialData ? "Edit product" : "Create product";
   const description = initialData ? "Edit a product." : "Add a new product";
@@ -93,11 +94,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         images: [],
         price: 0,
         categoryId: "",
-        colorId: "",
-        sizes: [],
+        sizes: sizes.map((size) => ({ sizeId: size.id, quantity: 0 })),
         isFeatured: false,
         isArchived: false,
       };
+
+  const [selectSizes, setSelectSizes] = useState<
+    { sizeId: string; quantity: number }[]
+  >(defaultValues.sizes);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
@@ -261,71 +265,97 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
             <FormField
               control={form.control}
-              name="sizeId"
+              name="sizes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Size</FormLabel>
+                  <FormLabel>Tallas</FormLabel>
 
                   <FormControl>
-                    <DropdownMenu open={dropdownOpen}>
-                      <DropdownMenuTrigger asChild>
-                        <button
-                          onClick={() => {
-                            setDropdownOpen(!dropdownOpen);
-                          }}
-                        >
-                          hola
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuCheckboxItem>
-                          <Checkbox
-                            // @ts-ignore
-                            onCheckedChange={field.onChange}
-                          />
-                          <span>Small</span>
-                          <input type="text" disabled={true} />
-                        </DropdownMenuCheckboxItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Dialog onOpenChange={() => setSelectSizes(field.value)}>
+                      <DialogTrigger asChild>
+                        <Button className="flex items-center justify-between">
+                          Seleccionar Tallas
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent
+                        style={{ width: "fit-content", maxWidth: "100%" }}
+                      >
+                        <DialogTitle className="mt-6">
+                          Seleccione las tallas
+                        </DialogTitle>
+                        <DialogDescription>
+                          Ingrese el stock por tallas
+                        </DialogDescription>
+                        {sizes.map((size) => (
+                          <div
+                            key={size.id}
+                            className="flex flex-row items-center justify-between"
+                          >
+                            <Label key={size.id} className="">
+                              {size.name}
+                            </Label>
+
+                            <IntegerInput
+                              min="0"
+                              maxIntegerValue={9999}
+                              step="1"
+                              placeholder="0"
+                              disabled={loading}
+                              value={
+                                field.value.find(
+                                  (current) => current.sizeId === size.id
+                                )?.quantity
+                              }
+                              className="ml-3 px-3 w-20"
+                              onChange={(e) => {
+                                const newSizes = selectSizes.map((current) => {
+                                  if (current.sizeId === size.id) {
+                                    return {
+                                      sizeId: size.id,
+                                      quantity: parseInt(e.target.value),
+                                    };
+                                  }
+                                  return current;
+                                });
+
+                                console.log(newSizes, "nuevas tallas");
+                                setSelectSizes(newSizes);
+                                console.log(
+                                  selectSizes,
+                                  "este es el select sizes"
+                                );
+                              }}
+                            />
+                          </div>
+                        ))}
+                        <DialogClose>
+                          <Button
+                            onClick={() => {
+                              field.onChange(
+                                selectSizes as {
+                                  sizeId: string;
+                                  quantity: number;
+                                }[]
+                              );
+
+                              setSelectSizes(field.value);
+                              console.log("tallas", selectSizes);
+
+                              console.log("field", field.value);
+                            }}
+                          >
+                            Guardar
+                          </Button>
+                        </DialogClose>
+                      </DialogContent>
+                    </Dialog>
                   </FormControl>
 
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="colorId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Color</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a color"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {colors.map((color) => (
-                        <SelectItem key={color.id} value={color.id}>
-                          {color.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
             <FormField
               control={form.control}
               name="isFeatured"

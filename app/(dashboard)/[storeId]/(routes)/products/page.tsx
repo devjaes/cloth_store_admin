@@ -5,7 +5,6 @@ import { formatter } from "@/lib/utils";
 
 import { ProductsClient } from "./components/client";
 import { ProductColumn } from "./components/columns";
-import { Product_Sizes } from "@prisma/client";
 
 const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
   const products = await prismadb.product.findMany({
@@ -19,7 +18,6 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
           size: true,
         },
       },
-      color: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -28,7 +26,6 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
 
   const formattedProducts: ProductColumn[] = await Promise.all(
     products.map((item) => {
-      console.log(item.sizes);
       return {
         id: item.id,
         name: item.name,
@@ -36,8 +33,9 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
         isArchived: item.isArchived,
         price: formatter.format(item.price.toNumber()),
         category: item.category.name,
-        sizes: item.sizes.map((size) => size.size.name),
-        color: item.color.value,
+        sizes: item.sizes
+          .filter((size) => size.quantity > 0)
+          .map((size) => size.size.value),
         createdAt: format(item.createdAt, "MMMM do, yyyy"),
       };
     })

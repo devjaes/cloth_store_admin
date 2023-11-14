@@ -64,7 +64,6 @@ export async function POST(
         isFeatured,
         isArchived,
         categoryId,
-        colorId,
         sizes: {
           createMany: {
             data: [
@@ -132,7 +131,6 @@ export async function GET(
       include: {
         images: true,
         category: true,
-        color: true,
         sizes: {
           include: {
             size: true,

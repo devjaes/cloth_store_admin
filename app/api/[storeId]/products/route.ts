@@ -109,7 +109,6 @@ export async function GET(
       where: {
         storeId: params.storeId,
         categoryId,
-        colorId,
         sizes: 
           onlyAvailable ? {
             some: {

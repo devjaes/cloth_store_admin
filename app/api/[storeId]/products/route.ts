@@ -14,6 +14,7 @@ export async function POST(
 
     const {
       name,
+      description,
       price,
       categoryId,
       colorId,
@@ -29,6 +30,10 @@ export async function POST(
 
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
+    }
+
+    if (!description) {
+      return new NextResponse("Description is required", { status: 400 });
     }
 
     if (!images || !images.length) {
@@ -106,7 +111,6 @@ export async function GET(
   try {
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId") || undefined;
-    const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
     const onlyAvailable = searchParams.get("onlyAvailable") || undefined;

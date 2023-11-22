@@ -51,6 +51,12 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
+    await prismadb.product_Sizes.deleteMany({
+      where: {
+        sizeId: params.sizeId
+      }
+    });
+
     const size = await prismadb.size.delete({
       where: {
         id: params.sizeId

@@ -14,70 +14,85 @@ export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
 }
 
+export interface Product {
+  id: string;
+  category: Category;
+  name: string;
+  price: string;
+  isFeatured: boolean;
+  sizes: ProductSize[];
+  images: Image[];
+}
+
+export interface ProductToBuy {
+  product: Product;
+  selectedSizes: { size: Size; quantity: number }[];
+  totalPrice: number;
+}
+
+export interface Image {
+  id: string;
+  url: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+}
+
+export interface Size {
+  id: string;
+  name: string;
+  value: string;
+}
+
+export interface ProductSize {
+  id: string;
+  size: Size;
+  quantity: number;
+}
+
+interface OrderRegistration {
+  productsToBuy:   ProductToBuy[];
+  total:      number;
+  clientName:      string;
+  clientLastName:  string;
+  clientEmail:     string;
+}
+
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { productIds } = await req.json();
+  const { orderRegistration } = await req.json() as { orderRegistration: OrderRegistration };
 
-  if (!productIds || productIds.length === 0) {
-    return new NextResponse("Product ids are required", { status: 400 });
+  if (!orderRegistration || orderRegistration.productsToBuy.length === 0) {
+    return new NextResponse("Order registartion is required", { status: 400 });
   }
 
-  const products = await prismadb.product.findMany({
-    where: {
-      id: {
-        in: productIds
-      }
-    }
-  });
-
-  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-
-  products.forEach((product) => {
-    line_items.push({
-      quantity: 1,
-      price_data: {
-        currency: 'USD',
-        product_data: {
-          name: product.name,
-        },
-        unit_amount: product.price.toNumber() * 100
-      }
-    });
-  });
 
   const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,
-      isPaid: false,
-      orderItems: {
-        create: productIds.map((productId: string) => ({
-          product: {
-            connect: {
-              id: productId
-            }
+      clientName: orderRegistration.clientName,
+      clientLastName: orderRegistration.clientLastName,
+      clientEmail: orderRegistration.clientEmail,
+      total: orderRegistration.total,
+      OrderItem: {
+        create: orderRegistration.productsToBuy.map((productToBuy: ProductToBuy) => ({
+          productName: productToBuy.product.name,
+          orderProductSizes: {
+            create: productToBuy.selectedSizes.map((selectedSize: { size: Size; quantity: number }) => ({
+              sizeName: selectedSize.size.name,
+              quantity: selectedSize.quantity
+            }))
           }
         }))
       }
     }
   });
 
-  const session = await stripe.checkout.sessions.create({
-    line_items,
-    mode: 'payment',
-    billing_address_collection: 'required',
-    phone_number_collection: {
-      enabled: true,
-    },
-    success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
-    cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
-    metadata: {
-      orderId: order.id
-    },
-  });
-
-  return NextResponse.json({ url: session.url }, {
+  return NextResponse.json({ order }, {
     headers: corsHeaders
   });
 };

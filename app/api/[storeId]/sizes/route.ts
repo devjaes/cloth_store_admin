@@ -48,6 +48,23 @@ export async function POST(
         storeId: params.storeId
       }
     });
+
+    const products = await prismadb.product.findMany({
+      where: {
+        storeId: params.storeId
+      }
+    });
+
+    if (products.length > 0) {
+      await prismadb.product_Sizes.createMany({
+        data: products.map((product) => ({
+          productId: product.id,
+          sizeId: size.id,
+          quantity: 0,
+        }))
+      });
+    }
+
   
     return NextResponse.json(size);
   } catch (error) {

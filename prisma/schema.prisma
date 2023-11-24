@@ -33,20 +33,21 @@ model Category {
 }
 
 model Product {
-  id         String          @id @default(uuid())
-  storeId    String // Foreign Key to Store
-  store      Store           @relation("StoreToProduct", fields: [storeId], references: [id])
-  categoryId String // Foreign Key to Category
-  category   Category        @relation("CategoryToProduct", fields: [categoryId], references: [id])
-  name       String
-  price      Decimal
-  isFeatured Boolean         @default(false)
-  isArchived Boolean         @default(false)
-  images     Image[] // Relation to Image model
-  orderItems OrderItem[] // Relation to Order model
-  sizes      Product_Sizes[] // Relation to Product_Sizes model
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
+  id          String          @id @default(uuid())
+  storeId     String // Foreign Key to Store
+  store       Store           @relation("StoreToProduct", fields: [storeId], references: [id])
+  categoryId  String // Foreign Key to Category
+  category    Category        @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  name        String
+  description String
+  price       Decimal
+  isFeatured  Boolean         @default(false)
+  isArchived  Boolean         @default(false)
+  images      Image[] // Relation to Image model
+  orderItems  OrderItem[] // Relation to Order model
+  sizes       Product_Sizes[] // Relation to Product_Sizes model
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 
   @@index([storeId])
   @@index([categoryId])

@@ -15,9 +15,9 @@ model Store {
   categories Category[] @relation("StoreToCategory")
   products   Product[]  @relation("StoreToProduct")
   sizes      Size[]     @relation("StoreToSize")
-  orders     Order[]    @relation("StoreToOrder")
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+  Order      Order[]
 }
 
 model Category {
@@ -44,7 +44,6 @@ model Product {
   isFeatured  Boolean         @default(false)
   isArchived  Boolean         @default(false)
   images      Image[] // Relation to Image model
-  orderItems  OrderItem[] // Relation to Order model
   sizes       Product_Sizes[] // Relation to Product_Sizes model
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -67,31 +66,7 @@ model Product_Sizes {
   @@index([sizeId])
 }
 
-model Order {
-  id         String      @id @default(uuid())
-  storeId    String // Foreign Key to Store
-  store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
-  orderItems OrderItem[] // Relation to OrderItem model
-  isPaid     Boolean     @default(false)
-  phone      String      @default("")
-  address    String      @default("")
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-
-  @@index([storeId])
-}
-
 // Intermediary for a many-to-many relationship
-model OrderItem {
-  id        String  @id @default(uuid())
-  orderId   String // Foreign Key to Order
-  order     Order   @relation(fields: [orderId], references: [id])
-  productId String // Foreign Key to Product
-  product   Product @relation(fields: [productId], references: [id])
-
-  @@index([orderId])
-  @@index([productId])
-}
 
 model Size {
   id        String          @id @default(uuid())
@@ -115,4 +90,39 @@ model Image {
   updatedAt DateTime @updatedAt
 
   @@index([productId])
+}
+
+model OrderProductSize {
+  id          String    @id @default(uuid())
+  sizeName    String
+  quantity    Int
+  orderItemId String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id])
+
+  @@index([orderItemId])
+}
+
+model OrderItem {
+  id                String             @id @default(uuid())
+  productName       String
+  orderId           String
+  orderProductSizes OrderProductSize[]
+  Order             Order              @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+}
+
+model Order {
+  id             String      @id @default(uuid())
+  storeId        String // Foreign Key to Store
+  clientName     String
+  clientLastName String
+  clientEmail    String
+  total          Float
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  Store          Store       @relation(fields: [storeId], references: [id])
+  OrderItem      OrderItem[]
+
+  @@index([storeId])
 }

@@ -8,7 +8,6 @@ export type OrderColumn = {
   lastname: string;
   email: string;
   products: string;
-  sizes: string;
   totalPrice: string;
   createdAt: string;
 };

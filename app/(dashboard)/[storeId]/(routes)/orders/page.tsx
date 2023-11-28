@@ -28,13 +28,14 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     name: item.clientName,
     lastname: item.clientLastName,
     email: item.clientEmail,
-    products: item.OrderItem.map((orderItem) => orderItem.productName).join(
-      ", "
-    ),
-    sizes: item.OrderItem.map((orderItem) =>
-      orderItem.orderProductSizes.map(
-        (size) => size.sizeName + ":(" + size.quantity + ")"
-      )
+    products: item.OrderItem.map(
+      (orderItem) =>
+        orderItem.productName +
+        ": [" +
+        orderItem.orderProductSizes.map(
+          (size) => size.sizeName + ":(" + size.quantity + ")"
+        ) +
+        "]"
     ).join(", "),
     totalPrice: formatter.format(item.total),
     createdAt: format(item.createdAt, "MMMM do, yyyy"),

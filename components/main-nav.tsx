@@ -41,7 +41,7 @@ export function MainNav({
     },
     {
       href: `/${params.storeId}/orders`,
-      label: "Ordenes",
+      label: "Órdenes",
       active: pathname === `/${params.storeId}/orders`,
     },
   ];
@@ -50,7 +50,7 @@ export function MainNav({
 
   return (
     <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+      className={cn("flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 space-x-0 sm:space-x-4 lg:space-x-6", className)}
       {...props}
     >
       <Link

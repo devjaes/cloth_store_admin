@@ -20,9 +20,13 @@ const Navbar = async () => {
 
   return (
     <div className="border-b">
-      <div className="flex h-16 items-center px-4">
+      <div className="ml-auto flex justify-center md:hidden items-center space-x-4 pt-4">
+        <ThemeToggle />
+        <UserButton afterSignOutUrl="/" />
+      </div>
+      <div className="flex items-center px-4 justify-center py-4">
         <MainNav className="mx-6" store={store ? store : undefined} />
-        <div className="ml-auto flex items-center space-x-4">
+        <div className="hidden md:flex ml-auto items-center space-x-4">
           <ThemeToggle />
           <UserButton afterSignOutUrl="/" />
         </div>

@@ -24,10 +24,10 @@ export const CategoriesClient: React.FC<CategoriesClientProps> = ({
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <Heading title={`Categories (${data.length})`} description="Manage categories for your store" />
-        <Button onClick={() => router.push(`/${params.storeId}/categories/new`)}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
+      <div className="flex flex-col gap-5 md:flex-row items-center md:justify-between">
+        <Heading title={`Categorías (${data.length})`} description="Gestiona categorías para tu tienda" />
+        <Button onClick={() => router.push(`/${params.storeId}/categories/new`)} >
+          <Plus className="mr-2 h-4 w-4" /> Agregar nueva
         </Button>
       </div>
       <Separator />

@@ -10,12 +10,13 @@ interface OrderClientProps {
   data: OrderColumn[];
 }
 
-export const OrderClient: React.FC<OrderClientProps> = ({
-  data
-}) => {
+export const OrderClient: React.FC<OrderClientProps> = ({ data }) => {
   return (
     <>
-      <Heading title={`Orders (${data.length})`} description="Manage orders for your store" />
+      <Heading
+        title={`Órdenes (${data.length})`}
+        description="Administra las órdenes de tu negocio."
+      />
       <Separator />
       <DataTable searchKey="products" columns={columns} data={data} />
     </>

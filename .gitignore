@@ -36,6 +36,6 @@ yarn-error.log*
 next-env.d.ts
 
 # .lock files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

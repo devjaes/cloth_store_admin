@@ -17,7 +17,6 @@ export async function POST(
       description,
       price,
       categoryId,
-      colorId,
       sizes,
       images,
       isFeatured,
@@ -48,10 +47,6 @@ export async function POST(
       return new NextResponse("Category id is required", { status: 400 });
     }
 
-    if (!colorId) {
-      return new NextResponse("Color id is required", { status: 400 });
-    }
-
     if (!sizes) {
       return new NextResponse("Sizes is required", { status: 400 });
     }
@@ -75,7 +70,7 @@ export async function POST(
       data: {
         name,
         description,
-        price,
+        price: parseFloat(price),
         isFeatured,
         isArchived,
         categoryId,

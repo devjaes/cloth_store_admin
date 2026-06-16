@@ -1,10 +1,10 @@
-# Ambivalence — Admin (2023)
+# Ambivalence - Admin (2023)
 
-> Admin app for the Ambivalence two-app e-commerce platform — catalog, inventory, and order management.
+> Admin app for the Ambivalence two-app e-commerce platform - catalog, inventory, and order management.
 
 ## Overview
 
-Admin surface for the Ambivalence clothing brand, paired with the customer-facing storefront. The owner manages stores, categories, products, sizes, and orders directly — no SaaS CMS in the middle. Mutations run through Next.js server actions; Clerk gates every route except the public API; Prisma persists to PostgreSQL; Cloudinary handles product imagery; Stripe webhooks reconcile order state.
+Admin surface for the Ambivalence clothing brand, paired with the customer-facing storefront. The owner manages stores, categories, products, sizes, and orders directly - no SaaS CMS in the middle. Mutations run through Next.js server actions; Clerk gates every route except the public API; Prisma persists to PostgreSQL; Cloudinary handles product imagery; Stripe webhooks reconcile order state.
 
 ## Stack
 
@@ -26,7 +26,7 @@ Admin surface for the Ambivalence clothing brand, paired with the customer-facin
 ## Repo scope
 
 - **Admin (this repo):** stores, products, categories, sizes, orders, billboard/overview dashboard.
-- **Storefront:** [devjaes/clothstore](https://github.com/devjaes/clothstore) — consumes this admin's API and renders the public catalog/checkout.
+- **Storefront:** [devjaes/clothstore](https://github.com/devjaes/clothstore) - consumes this admin's API and renders the public catalog/checkout.
 
 ## Local setup
 
@@ -62,4 +62,4 @@ Earlier project (2023) for an Ecuadorian clothing brand. Kept public as part of 
 
 ## Portfolio
 
-[Project entry on devjaes.dev →](https://devjaes.dev/work/ambivalence)
+[Project entry on devjaes.dev](https://devjaes.dev/work/ambivalence)

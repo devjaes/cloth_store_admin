@@ -13,7 +13,7 @@ Admin surface for the Ambivalence clothing brand, paired with the customer-facin
 | Framework   | Next.js 13.4 (App Router + Server Actions)          |
 | Language    | TypeScript 5                                        |
 | ORM         | Prisma 4.16                                         |
-| Database    | PostgreSQL (`relationMode = "prisma"`, PlanetScale-compatible) |
+| Database    | PostgreSQL                                          |
 | Auth        | Clerk (`@clerk/nextjs`)                             |
 | UI          | Tailwind CSS + Radix primitives + shadcn/ui         |
 | Forms       | react-hook-form + Zod                               |
@@ -58,7 +58,7 @@ FRONTEND_STORE_URL=http://localhost:3001
 
 ## Status
 
-Earlier project (2023). The brand has since closed and the production deployment is no longer maintained. The repository is kept public for the career timeline.
+Earlier project (2023) for an Ecuadorian clothing brand. Kept public as part of the career timeline.
 
 ## Portfolio
 
